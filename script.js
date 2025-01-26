@@ -19,6 +19,7 @@ let InputPeopleName = document.getElementById("inputPeopleName");
 
 let inputTripName;
 let inputPeopleNameVariable;
+let peopleCount = 0;
 
 plusBtn.addEventListener("click", () => {
     tripDetailPage.style.display = "inline";
@@ -33,8 +34,31 @@ cancelBtn.addEventListener("click", () => {
 });
 confirmBtn.addEventListener("click", () => {
     inputTripName = inputElement.value.trim(); 
+    const nameContainerFrame = document.querySelector(".nameContainerFrame");
+    nameContainerFrame.innerHTML = "";
+
+    // Create a new tripData div
+    const tripDataDiv = document.createElement("div");
+    tripDataDiv.classList.add("tripData");
+    tripDataDiv.innerHTML = `
+        <div class="nameTripFrame">
+            <h4 id="showTripName">${inputTripName}</h4>
+            <h4 id="showCreatedTime">${new Date().toLocaleDateString()}</h4>
+        </div>
+        <div class="joinCountFrame">
+            <h4 class="joinCount">Join: ${peopleCount}</h4>
+        </div>
+        <div class="invitePeopleFrame">
+            <div class="invitePeopleBorder"></div>
+        </div>
+    `;
+
+    const showTripContainer = document.querySelector(".showTrip");
+    showTripContainer.appendChild(tripDataDiv);
     tripDetailPage.style.display = "none";
     mobileContainer.classList.remove("blur-active");
+    inputElement.value = "";
+    peopleCount = 0;
 });
 
 //Add people name page
@@ -59,13 +83,25 @@ ConfirmInputBtn.addEventListener("click",() => {
             </button>
         `;
         nameContainerFrame.appendChild(peopleNameDiv);
+        peopleCount++;
+        const invitePeopleBorder = document.querySelector(".invitePeopleBorder");
+        const nameDiv = document.createElement("div");
+
         tripDetailPage.classList.remove("blur-active");
         InputNamePage.style.display = "none";
         InputPeopleName.value = "";
+        nameDiv.classList.add("name");
+        nameDiv.textContent = inputPeopleNameVariable;
+        invitePeopleBorder.appendChild(nameDiv);
 
         const deleteBtn = peopleNameDiv.querySelector(".deleteNameButton");
         deleteBtn.addEventListener("click", () => {
             peopleNameDiv.remove(); 
+            nameDiv.remove();
+            peopleCount--;
+            if (joinCount) {
+                joinCount.textContent = `Join: ${peopleCount}`;
+            }
         });
     }
     else {
