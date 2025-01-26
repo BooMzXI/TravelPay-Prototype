@@ -1,0 +1,202 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+.mobile {
+    display: none;
+}
+.screenCenterFixed {
+    display: none;
+}
+@media (max-width: 500px) {
+    .container {
+        position: relative;
+        width: 100%;
+        height: 100vh;
+    }
+    .window {
+        display: none;
+    }
+    .mobile {
+        position: relative;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .menu {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        width: 100%;
+        height: 50px;
+        background: rgb(176, 180, 180);
+    }
+    i.fa-bars {
+        font-size: 30px;
+        cursor: pointer;
+    }
+    .menu-bottom {
+        position: fixed;
+        bottom: 0;
+        width: 100%;
+        height: 50px;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        background: rgb(176, 180, 180);
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+    }
+    
+    .menu-bottom i {
+        font-size: 24px;
+        color: #333;
+        cursor: pointer;
+    }
+    .plusButtonBackground {
+        background: white;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 5px 4px 6px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+    .plusButtonControl {
+        position: absolute;
+        width: 100%;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        bottom: 15px;
+    }
+    .screenCenterFixed {
+        display: flex;
+        position: absolute;
+        top: 150px;
+        left: 30px;
+    }
+    .addTripBackground {
+        font-family: Verdana, Geneva, Tahoma, sans-serif;
+        position: fixed;
+        width: 300px;
+        height: 400px;
+        background: rgb(238, 237, 237);
+        border-radius: 20px;
+        display: none;
+        box-shadow: 3px 10px 6px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+    .tripNameContainer {
+        width: 100%;
+        height: 80px;
+        margin: 10px 0 10px 0;
+    }
+    #tripDetail .tripNameContainer input {
+        width: 90%;
+        padding: 10px; 
+        margin: 5px 0 0 10px; 
+        border: 1px solid #ccc; 
+        border-radius: 5px;
+        font-size: 16px;
+        outline: none;
+        transition: border-color 0.3s ease;
+        box-shadow: 3px 10px 6px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+    .addnameContainer {
+        width: 100%;
+        height: 40px;
+        padding: 10px;
+        margin: 10px 0 10px 0;
+        font-size: 20px;
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    .addnameContainer #addButton {
+        background: #e4e4e4;
+        width: 70px;
+        height: 25px;
+        position: absolute;
+        left: 130px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 3px 10px 6px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.06);
+        cursor: pointer;
+        font-size: 14px;
+        border: 1px solid rgb(189, 189, 189);
+        border-radius: 10px;
+        background: white;
+    }
+    .addnameContainer #addButton i {
+        margin: 4px;
+    }
+    .addTripBackground .ButtonConfirm {
+        width: 100%;
+        height: 50px;
+        display: flex;
+        justify-content: end;
+        padding-right: 10px;
+    }
+    .addTripBackground .ButtonConfirm  button {
+        width: 60px;
+        height: 22px;
+        font-size: 15px;
+        margin: 0 10px 0 10px;
+        border-radius: 5px;
+        background: white;
+        border: 1px solid rgb(197, 196, 197);
+        box-shadow: 3px 5px 6px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+    .nameContainer {
+        width: 100%;
+        height: 200px;
+        padding: 10px;
+        margin: 10px 0 10px 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .nameContainer .nameContainerFrame {
+        width: 100%;
+        height: 200px;
+        background: white;
+        border: 1px solid rgb(223, 222, 222); 
+    }
+    .frame {
+        width: 100%;
+        height: 30px;
+        font-size: 20px;
+    }
+    .tripNameContainer .frame .text {
+        padding-left: 10px;
+    }
+    #tripDetail .nameContainer .peopleName {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: 40px;
+        padding: 20px;
+        border-bottom: 1px solid black;
+    }
+    #tripDetail .nameContainer .peopleName button {
+        width: 30px;
+        height: 25px;
+        font-size: 15px;
+        background: rgb(255, 255, 255);
+        box-shadow: 3px 5px 6px rgba(0, 0, 0, 0.5), 0 1px 3px rgba(0, 0, 0, 0.06);
+        border: 1px solid rgb(214, 200, 200);
+        border-radius: 5px;
+    }
+    #tripDetail .nameContainer .peopleName button i {
+        color: rgb(241, 34, 34);
+    }
+}
