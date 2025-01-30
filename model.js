@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
+require('dotenv').config()
 
-mongoose.connect('mongodb+srv://bummi:<pass>@express.iuqqb.mongodb.net/?retryWrites=true&w=majority&appName=Express',{
+mongoose.connect(`mongodb://${process.env.DB_HOST || 'localhost'}:${process.env.DB_PORT || 27017}/${process.env.DB_NAME || "travelPay"}`,{
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
