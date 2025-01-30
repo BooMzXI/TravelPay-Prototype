@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./style.css">
-    <link rel="stylesheet" href="./additionalElement.css">
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/additionalElement.css">
     <script src="https://kit.fontawesome.com/009230d963.js" crossorigin="anonymous"></script>
     <title>Trip</title>
 </head>
@@ -34,7 +34,10 @@
                     <div class="frame">
                         <div class="text">Trip Name</div>
                     </div>
-                    <input type="text" name="" id="nameInput" placeholder="Type...">
+                    <div class="inputFrame">
+                        <input type="text" name="" id="nameInput" placeholder="Type...">
+                        <button id="confirmTripName"><i class="fa-solid fa-check"></i></button>
+                    </div>
                 </div>
 
                 <div class="addnameContainer">
@@ -47,8 +50,10 @@
 
                 <div class="nameContainer">
 
-                    <div class="nameContainerFrame"></div>
-
+                    <div class="nameContainerFrame">
+                        <div class="invitePeopleBorder"></div>
+                    </div>
+                    
                 </div>
                 <div class="ButtonConfirm">
                     <button id="cancelButton">Cancel</button>
@@ -66,7 +71,7 @@
             </div>
 
             <div class="showTrip"></div>
-                    
+
 
                 </div>
             </div>
@@ -84,6 +89,6 @@
     </div>
 
 
-    <script src="./script.js"></script>
+    <script type="module" src="./js/script.js"></script>
 </body>
 </html>
