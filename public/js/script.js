@@ -13,7 +13,7 @@ const invitePeopleBorder = document.querySelector(".invitePeopleBorder");
 let confirmTripName = document.getElementById('confirmTripName')
 let addTripBackground = document.getElementsByClassName('addTripBackground')
 
-let server = "https://server.iambanky.com:3000/"; // Server URL (HTTPS)
+let server = "https://server.iambanky.com:3000"; // Server URL (HTTPS)
 
 let inputTripName;
 let inputPeopleNameVariable;
