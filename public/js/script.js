@@ -13,6 +13,7 @@ const invitePeopleBorder = document.querySelector(".invitePeopleBorder");
 let confirmTripName = document.getElementById('confirmTripName')
 let addTripBackground = document.getElementsByClassName('addTripBackground')
 
+let server = "https://server.iambanky.com:3000"; // Server URL (HTTPS)
 
 let inputTripName;
 let inputPeopleNameVariable;
@@ -37,7 +38,7 @@ confirmTripName.addEventListener('click', async () => {
         return;
     }
     try {
-        const response = await fetch("http://localhost:3000/api/trips", {
+        const response = await fetch(`${server}/api/trips`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ tripName: inputTripName }),
@@ -59,7 +60,7 @@ ConfirmInputBtn.addEventListener("click", async () => {
         return;
     }
     try {
-        const response = await fetch("http://localhost:3000/api/people", {
+        const response = await fetch(`${server}/api/people`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ name: inputPeopleNameVariable , tripName: inputTripName}),
@@ -93,7 +94,7 @@ ConfirmInputBtn.addEventListener("click", async () => {
 confirmBtn.addEventListener("click", async () => {
    try {
     console.log(inputTripName)
-    const res = await fetch('http://localhost:3000/api/tripData', {
+    const res = await fetch(`${server}/api/tripData`, {
         method: "POST",
         headers: { "Content-Type" : "application/json" },
         body: JSON.stringify({ tripName: inputTripName }),
@@ -154,7 +155,7 @@ document.querySelector(".showTrip").addEventListener("click", async (event) => {
         
         if (confirm(`Are you sure you want to delete the trip: ${tripName}?`)) {
             try {
-                const res = await fetch(`http://localhost:3000/api/trips/${tripName}`, {
+                const res = await fetch(`${server}/api/trips/${tripName}`, {
                     method: "DELETE",
                     headers: { "Content-Type": "application/json" },
                 });

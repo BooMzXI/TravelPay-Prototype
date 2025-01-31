@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
+require('dotenv').config()
 
-mongoose.connect('mongodb+srv://bummi:<pass>@express.iuqqb.mongodb.net/?retryWrites=true&w=majority&appName=Express',{
+mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASS}@${process.env.DB_HOST}/`,{
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
