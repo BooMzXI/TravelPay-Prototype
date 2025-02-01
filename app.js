@@ -5,12 +5,21 @@ const path = require('path');
 const fs = require('fs');
 const http = require('http');
 const https = require('https');
+const session = require('express-session')
 
 require('dotenv').config();
 
 // Load DB model
-const { TripNameModel } = require('./model');
+const { loginData } = require('./model');
 const app = express();
+
+//Session Config
+app.use(session({
+    secret: 'Bummi',
+    resave: false,
+    saveUninitialized: false,
+    cookie: { secure: process.env.USE_HTTPS === 'true' }
+}));
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -29,17 +38,43 @@ if (process.env.USE_HTTPS === 'true') {
     console.log("Starting server with HTTP...");
 }
 
+app.get('/', (req, res) => {
+    if(!req.session.user){
+      return res.sendFile(path.join(__dirname, "public", "html", 'login.html'));
+    }
+    res.sendFile(path.join(__dirname, "public", "html", 'index.html')); 
+  });
+  
+app.get('/index.html', (req, res) => {
+    if (!req.session.user) {
+      return res.redirect('/');  // Redirect to login if not logged in
+    }
+    console.log(req.session.user) //Check session id
+    res.sendFile(path.join(__dirname, "public", "html", 'index.html')); 
+  });
+
+
 // API Routes
 app.post('/api/people', async (req, res) => {
     try {
         const { name, tripName } = req.body;
-        const trip = await TripNameModel.findOne({ tripName });
+        if (!req.session.user || !req.session.user.email) {
+            return res.status(404).json('Error: User not logged in or email not found');
+        }
+        
+        const userEmail = req.session.user.email;
+        const user = await loginData.findOne({ email: userEmail });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const trip = user.Data.find((trip) => trip.tripName === tripName);
         if (!trip) {
             return res.status(404).json({ error: 'Trip not found' });
         }
-        trip.PeopleNameList.push(name);
-        await trip.save();
-        res.json({ name, peopleNameList: trip.PeopleNameList });
+        trip.peopleNameList.push(name);
+        await user.save();
+        res.json({ name, peopleNameList: trip.peopleNameList });
     } catch (err) {
         res.status(500).json({ error: 'Failed to save person' });
     }
@@ -48,15 +83,25 @@ app.post('/api/people', async (req, res) => {
 app.post('/api/trips', async (req, res) => {
     try {
         const { tripName } = req.body;
-        const existingTrip = await TripNameModel.findOne({ tripName });
+        if (!req.session.user || !req.session.user.email) {
+            return res.status(404).json('Error: User not logged in or email not found');
+        }
+        
+        const userEmail = req.session.user.email;
+        const user = await loginData.findOne({ email: userEmail });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const existingTrip = user.Data.find(trip => trip.tripName === tripName);
         if (existingTrip) {
             return res.status(400).json({ error: "Trip already exists!" });
         }
-        const trip = new TripNameModel({
-            tripName
-        });
-        await trip.save();
-        res.json({ id: trip._id, tripName: trip.tripName });
+        const newTrip = { tripName, peopleNameList: [] };
+        user.Data.push(newTrip);
+
+        await user.save();
+        res.json({ tripName: newTrip.tripName });
     } catch (err) {
         res.status(500).json({ error: 'Failed to save trip' });
     }
@@ -65,11 +110,22 @@ app.post('/api/trips', async (req, res) => {
 app.post('/api/tripData', async (req, res) => {
     try {
         const { tripName } = req.body;
-        const trip = await TripNameModel.findOne({ tripName });
+
+        if (!req.session.user || !req.session.user.email) {
+            return res.status(404).json('Error: User not logged in or email not found');
+        }
+        
+        const userEmail = req.session.user.email;
+        const user = await loginData.findOne({ email: userEmail });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const trip = user.Data.find(trip => trip.tripName === tripName);
         if (!trip) {
             return res.status(404).json({ error: 'Trip not found' });
         }
-        res.json({ tripName: trip.tripName, PeopleNameList: trip.PeopleNameList });
+        res.json({ tripName: trip.tripName, peopleNameList: trip.peopleNameList });
     } catch (err) {
         console.error("Error fetching trip data:", err);
         res.status(500).json({ error: 'Failed to fetch trip data' });
@@ -78,17 +134,52 @@ app.post('/api/tripData', async (req, res) => {
 
 app.delete('/api/trips/:tripName', async (req, res) => {
     try {
-        const { tripName } = req.params;
-        const deletedTrip = await TripNameModel.findOneAndDelete({ tripName });
-        if (!deletedTrip) {
+        if (!req.session.user || !req.session.user.email) {
+            return res.status(401).json({ error: "User not logged in or email not found" });
+        }
+
+        const userEmail = req.session.user.email;
+        const user = await loginData.findOne({ email: userEmail });
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        // Check if the trip exists
+        const tripIndex = user.Data.findIndex(trip => trip.tripName === req.params.tripName);
+        if (tripIndex === -1) {
             return res.status(404).json({ error: "Trip not found" });
         }
+
+        // Remove trip from user's Data array
+        user.Data.splice(tripIndex, 1);
+        await user.save();
+
         res.json({ message: "Trip deleted successfully" });
     } catch (err) {
         console.error("Error deleting trip:", err);
         res.status(500).json({ error: "Failed to delete trip" });
     }
 });
+
+
+app.post('/api/sign-in',async (req,res) => {
+    const { email , password } = req.body
+    const user = await loginData.findOne({ email })
+    if (!user) {
+      return res.status(404).json({ error: 'Error: Cannot find this email' });
+  }
+  
+  if (password !== user.password) {
+      return res.status(401).json({ error: 'Incorrect password' });
+  }
+  
+  // Save user info in session after successful login
+  req.session.user = { id: user._id, email: user.email };
+  
+  // Send success response
+  return res.json({ success: true, message: "Login successful!" });
+  })
 
 // Serve Static Files
 app.use(express.static(path.join(__dirname, 'public')));

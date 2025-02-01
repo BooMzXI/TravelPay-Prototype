@@ -13,7 +13,7 @@ const invitePeopleBorder = document.querySelector(".invitePeopleBorder");
 let confirmTripName = document.getElementById('confirmTripName')
 let addTripBackground = document.getElementsByClassName('addTripBackground')
 
-let server = "https://server.iambanky.com:3000"; // Server URL (HTTPS)
+let server = "http://localhost:3000"; // Server URL (HTTPS)
 
 let inputTripName;
 let inputPeopleNameVariable;
@@ -93,7 +93,6 @@ ConfirmInputBtn.addEventListener("click", async () => {
 
 confirmBtn.addEventListener("click", async () => {
    try {
-    console.log(inputTripName)
     const res = await fetch(`${server}/api/tripData`, {
         method: "POST",
         headers: { "Content-Type" : "application/json" },
@@ -102,7 +101,7 @@ confirmBtn.addEventListener("click", async () => {
     if(!res.ok){
         throw new Error("Error to fetch data")
     }
-    const { tripName , PeopleNameList} = await res.json();
+    const { tripName , peopleNameList} = await res.json();
 
     const tripDataDiv = document.createElement("div");
         tripDataDiv.classList.add("tripData");
@@ -112,12 +111,12 @@ confirmBtn.addEventListener("click", async () => {
             <h4>${new Date().toLocaleDateString()}</h4>
         </div>
         <div class="joinCountFrame">
-            <h4>Join: ${PeopleNameList.length}</h4>
+            <h4>Join: ${peopleNameList.length}</h4>
             <button class="deleteTripButton"><i class="fa-solid fa-trash"></i></i></button>
         </div>
         <div class="invitePeopleFrame">
             <div class="invitePeopleBorder">
-                <div>${PeopleNameList.map(person => `<span>${person}</span>`).join(" , ")}</div>
+                <div>${peopleNameList.map(person => `<span>${person}</span>`).join(" , ")}</div>
             </div>
         </div>
     `;

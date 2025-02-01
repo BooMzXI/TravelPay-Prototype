@@ -12,12 +12,16 @@ mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASS
         console.error('Database connection error:', err)
     })
 
-const TripName = new mongoose.Schema({
-    tripName: {type: String, require: true},
-    PeopleNameList: {type: Array},
-    PeopleJoinName: {type: String},
-})
-
-const TripNameModel = mongoose.model('TripNameModel',TripName)
-
-module.exports = {TripNameModel}
+    const login = new mongoose.Schema({
+        email: {type: String},
+        password: {type: String},
+        Data: [{
+            tripName: {type: String , require: true},
+            peopleNameList: {type: Array},
+        }],
+        dateNow: { type: Date, default: new Date() }
+    })
+    
+    const loginData = mongoose.model('loginData', login)
+    
+    module.exports = { loginData };

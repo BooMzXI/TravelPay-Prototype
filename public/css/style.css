@@ -46,6 +46,7 @@ body {
         height: 100vh;
         display: inline;
         justify-content: center;
+        overflow: auto;
     }
     i.fa-bars {
         font-size: 30px;
@@ -196,6 +197,7 @@ body {
         height: 200px;
         background: white;
         border: 1px solid rgb(223, 222, 222); 
+        overflow: auto;
     }
     .frame {
         width: 100%;
