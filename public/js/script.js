@@ -19,9 +19,55 @@ let inputTripName;
 let inputPeopleNameVariable;
 let peopleList = [];
 
+window.onload = async () => {
+    try {
+        const res = await fetch(`${server}/api/LoadData`, {
+            method: "GET",
+            headers: {"Content-Type" : "application/json"}
+        })
+        if (!res.ok) {
+            console.log("Error loading trips");
+            return;
+        }
+        const trips = await res.json();
+        console.log("Trips loaded:", trips);
+
+        const showTripContainer = document.querySelector(".showTrip");
+        showTripContainer.innerHTML = ""; // Clear previous content
+
+        trips.forEach(trip => {
+            const { tripName, peopleNameList } = trip;
+
+            const tripDataDiv = document.createElement("div");
+            tripDataDiv.classList.add("tripData");
+            tripDataDiv.innerHTML = `
+                <div class="nameTripFrame">
+                    <h4>${tripName}</h4>
+                    <h4>${new Date().toLocaleDateString()}</h4>
+                </div>
+                <div class="joinCountFrame">
+                    <h4>Join: ${peopleNameList.length}</h4>
+                    <button class="deleteTripButton"><i class="fa-solid fa-trash"></i></button>
+                </div>
+                <div class="invitePeopleFrame">
+                    <div class="invitePeopleBorder">
+                        <div>${peopleNameList.map(person => `<span>${person}</span>`).join(" , ")}</div>
+                    </div>
+                </div>
+            `;
+
+            showTripContainer.appendChild(tripDataDiv);
+        });
+    } catch (err) {
+        console("Error unable to load data from the database: ",err)
+    }
+}
+
+
 plusBtn.addEventListener("click", () => {
     tripDetailPage.style.display = "inline";
     mobileContainer.classList.add("blur-active");
+    addTripBackground[0].style.height = "100px";
 });
 
 cancelBtn.addEventListener("click", () => {

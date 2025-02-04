@@ -45,16 +45,38 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", 'index.html')); 
   });
   
-app.get('/index.html', (req, res) => {
+app.get('/html/index.html', (req, res) => {
     if (!req.session.user) {
       return res.redirect('/');  // Redirect to login if not logged in
     }
-    console.log(req.session.user) //Check session id
     res.sendFile(path.join(__dirname, "public", "html", 'index.html')); 
   });
-
+app.get('/api/register', (req,res) => {
+    if (req.session.user){
+        return res.sendFile(path.join(__dirname, "public", "html", 'index.html'));
+    }
+})
 
 // API Routes
+
+app.get('/api/LoadData', async (req,res) => {
+    try {
+        if (!req.session.user || !req.session.user.email) {
+            return res.status(404).json('Error: User not logged in or email not found');
+        }
+        const userEmail = req.session.user.email;
+        const user = await loginData.findOne({ email: userEmail });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.json(user.Data || []);
+
+
+    } catch {
+        res.status(500).json({ error: 'Failed to load data' });
+    }
+})
+
 app.post('/api/people', async (req, res) => {
     try {
         const { name, tripName } = req.body;
@@ -173,13 +195,25 @@ app.post('/api/sign-in',async (req,res) => {
   if (password !== user.password) {
       return res.status(401).json({ error: 'Incorrect password' });
   }
-  
+
   // Save user info in session after successful login
   req.session.user = { id: user._id, email: user.email };
-  
+
   // Send success response
   return res.json({ success: true, message: "Login successful!" });
   })
+
+  app.post('/api/register', async (req,res) => {
+    const { email , password } = req.body
+    const user = await loginData.findOne({ email })
+    if (user) {
+        return res.status(403).json({error : 'This email is already registered'})
+    }
+    const newData = new loginData({email: email, password: password}) 
+    newData.save()
+    return res.json("Register successful!");
+  })
+
 
 // Serve Static Files
 app.use(express.static(path.join(__dirname, 'public')));

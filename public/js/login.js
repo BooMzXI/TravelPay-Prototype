@@ -1,6 +1,7 @@
 const InputPassword = document.getElementById('PasswordData')
 const InputEmail = document.getElementById('EmailData')
 const loginButton = document.getElementById('loginButton')
+const registerButton = document.getElementById('registerButton')
 
 let server = "http://localhost:3000";
 
@@ -23,11 +24,15 @@ loginButton.addEventListener('click', async () => {
         }
         else {
             alert("Welcome back!")
-            window.location.href = "/index.html"
+            window.location.href = "/html/index.html"
         }
     } catch (err) {
         if(err){
             console.log("Error to fetch  sign-in api: ",err)
         }
     }
+})
+
+registerButton.addEventListener('click', () => {
+    window.location.href = "/html/register.html"
 })

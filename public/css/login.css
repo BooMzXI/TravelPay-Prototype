@@ -2,6 +2,13 @@
     border: none;
 }
 #registerButton:hover {
-    background: #508bfc;
+    background: #157347;
+    color: white;
+}
+#loginButton {
+    background: #198754;
+}
+#loginButton:hover {
+    background: #157347;
     color: white;
 }
