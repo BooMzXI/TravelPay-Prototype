@@ -67,6 +67,7 @@
     border-radius: 10px;
     margin: 20px;
     font-size: 20px;
+    z-index: 1;
 }
 .showTrip .tripData .nameTripFrame {
     width: 100%;
@@ -119,4 +120,5 @@
     background: none;
     border: none;
     outline: none;
+    z-index: 2;
 }

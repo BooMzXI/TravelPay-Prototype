@@ -1,0 +1,139 @@
+@media (max-width: 500px) {
+    #BillFrame {
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif ;
+        position: fixed;
+        padding: 20px;
+        top: 20%;
+        width: 300px;
+        height: 280px;
+        display: none;
+        justify-content: center;
+        align-items: center;
+        background: rgb(255, 255, 255);
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+    }
+    .billNameFrame {
+        width: 100%;
+        height: 100px;
+    }
+    .billNameFrame h2 {
+        font-size: 20px;
+    }
+    .textExplain {
+        width: 100%;
+        height: 30px;
+        color: rgb(14, 14, 14);
+    }
+    .textExplain h2 {
+        font-size: 20px;
+    }
+    input#BillName {
+        width: 100%;
+        height: 50px;
+        font-size: 20px;
+        border: none;
+        border-bottom: 1px solid gray;
+        margin: 10px 0 10px 0;
+        padding: 5px;
+    }
+    input#Amount {
+        width: 100%;
+        height: 50px;
+        font-size: 20px;
+        padding: 5px;
+        border: none;
+        border-bottom: 1px solid gray;
+    }
+    .btnFrame {
+        width: 100%;
+        height: 50px;
+        display: flex;
+        justify-content: end;
+        align-items: center;
+    }
+    #confirmBill {
+        width: 70px;
+        height: 40px;
+        background: transparent;
+        color: aqua;
+        border: 0;
+        font-size: 20px;
+    }
+    #cancelBill {
+        width: 70px;
+        height: 40px;
+        background: transparent;
+        color: aqua;
+        border: 0;
+        font-size: 20px;
+        margin: 0 10px 0 0;
+    }
+
+
+
+    .showBillData {
+        width: 100%;
+        height: 87vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        display: inline;
+        justify-content: center;
+        top: 50px;
+        position: absolute;
+    }
+    .billFrame {
+        width: 95%;
+        height: 130px;
+        border: 1px solid green;
+        margin: 10px;
+    }
+    .billNameFrame {
+        width: 100%;
+        height: 50px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .amount{
+        font-size: 25px;
+        margin: 10px;
+        padding-bottom: 5px;
+    }
+    .deleteFrame {
+        width: 100%;
+        height: 20px;
+        display: flex;
+        justify-content: end;
+        align-items: center;
+        padding-right: 10px;
+    }
+    .delete {
+        font-size: 20px;
+        margin: 5px;
+    }
+    .delete button {
+        font-size: 20px;
+        border: none;
+        background: white;
+    }
+    .billNameFrame h2 {
+        margin: 10px;
+        font-size: 25px;
+    }
+    .peopleCheckBox {
+        width: 50px;
+        height: 50px;
+        display: grid;
+        place-items: center;
+        margin: 5px;
+    }
+    .peopleName {
+        width: 100%;
+        height: 60px;
+        display: flex;
+        padding: 10px;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+}

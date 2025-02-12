@@ -22,11 +22,12 @@ registerButton.addEventListener('click', async () => {
             headers: {"Content-Type" : "application/json"},
             body: JSON.stringify({email: var_registerEmail , password: var_registerPassword})
         })
+        result = await res.json()
         if (!res.ok){
             return alert('This email is already registered. Please use a different email address')
         }
         alert('Register successfully!')
-        window.location.href = '/index.html'
+        window.location.href = result.redirectUrl;
     } catch (err) {
         console.log("Error can't fetch data",err)
     }

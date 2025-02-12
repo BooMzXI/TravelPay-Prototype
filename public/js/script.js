@@ -12,6 +12,8 @@ let InputPeopleName = document.getElementById("inputPeopleName");
 const invitePeopleBorder = document.querySelector(".invitePeopleBorder");
 let confirmTripName = document.getElementById('confirmTripName')
 let addTripBackground = document.getElementsByClassName('addTripBackground')
+let tripData = document.getElementsByClassName('tripData')
+
 
 let server = "http://localhost:3000"; // Server URL (HTTPS)
 
@@ -59,10 +61,9 @@ window.onload = async () => {
             showTripContainer.appendChild(tripDataDiv);
         });
     } catch (err) {
-        console("Error unable to load data from the database: ",err)
+        console.log("Error unable to load data from the database: ",err)
     }
 }
-
 
 plusBtn.addEventListener("click", () => {
     tripDetailPage.style.display = "inline";
@@ -80,7 +81,9 @@ cancelBtn.addEventListener("click", () => {
 confirmTripName.addEventListener('click', async () => {
     inputTripName = inputElement.value.trim();
     if (!inputTripName) {
-        alert("Please enter a trip name!");
+        const errorData = await response.json();
+        alert(errorData.message || "Trip name already exists! Try another.");
+        inputElement.value = "";
         return;
     }
     try {
@@ -96,7 +99,7 @@ confirmTripName.addEventListener('click', async () => {
     }
     addTripBackground[0].style.height = "400px";
     } catch(err) {
-        console.error(error);
+        console.error(err);
     }
 })
 ConfirmInputBtn.addEventListener("click", async () => {
@@ -194,6 +197,29 @@ CancelInputBtn.addEventListener("click", () => {
 });
 
 document.querySelector(".showTrip").addEventListener("click", async (event) => {
+    if (event.target.closest(".tripData")) {
+        const tripDiv = event.target.closest(".tripData");
+        const tripName = tripDiv.querySelector(".nameTripFrame h4").innerText;
+        try {
+            const res = await fetch(`${server}/api/tripData`, {
+                method: "POST",
+                headers: {"Content-Type" : "application/json"},
+                body: JSON.stringify({tripName: tripName})
+            })
+            if (!res.ok){
+                throw new Error("Error to GET tripData")
+            } else {
+                const tripData = await res.json()
+                
+                sessionStorage.setItem("tripData", JSON.stringify(tripData));
+
+                window.location.href = "/tripDetail.html";
+            }
+        } catch (err) {
+            console.error('Error fetching data:', err);
+        }
+    }
+
     if (event.target.closest(".deleteTripButton")) {
         const tripDiv = event.target.closest(".tripData"); // Get the trip container
         const tripName = tripDiv.querySelector(".nameTripFrame h4").innerText; // Get the trip name
@@ -209,7 +235,7 @@ document.querySelector(".showTrip").addEventListener("click", async (event) => {
                     throw new Error("Failed to delete trip");
                 }
 
-                tripDiv.remove(); // Remove from DOM
+                tripDiv.remove();
                 console.log("Trip deleted successfully!");
             } catch (err) {
                 console.error("Error deleting trip:", err);

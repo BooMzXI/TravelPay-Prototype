@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/additionalElement.css">
+    <link rel="stylesheet" href="../css/tripData.css">
     <link rel="stylesheet" href="../css/sidebar.css">
     <script src="https://kit.fontawesome.com/009230d963.js" crossorigin="anonymous"></script>
     <title>Trip</title>
@@ -14,63 +14,33 @@
         <div class="window">
             <h1>This site doesn't support pc version</h1>
         </div>
+
+
         <div class="screenCenterFixed">
-
-            <div class="inputNameBackground">
-                <div class="inputFrame">
-                    <input type="text" id="inputPeopleName" placeholder="Name...">
+            <div id="BillFrame">
+                <div class="billNameFrame">
+                    <h2>Add new bill</h2>
                 </div>
-                <div class="buttonFrame">
-                    <button id="cancelInputButton">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                    <button id="confirmInputButton">
-                        <i class="fa-solid fa-check"></i>
-                    </button>
+                <div class="textExplain">
+                    <h2>Add a new bill to the list.</h2>
                 </div>
-            </div>
-
-            <div class="addTripBackground" id="tripDetail">
-                <div class="tripNameContainer">
-                    <div class="frame">
-                        <div class="text">Trip Name</div>
-                    </div>
-                    <div class="inputFrame">
-                        <input type="text" name="" id="nameInput" placeholder="Type...">
-                        <button id="confirmTripName"><i class="fa-solid fa-check"></i></button>
-                    </div>
-                </div>
-
-                <div class="addnameContainer">
-                    Add Name
-                    <button id="addButton">
-                        <i class="fa-solid fa-plus"></i>
-                        ADD
-                    </button>
-                </div>
-
-                <div class="nameContainer">
-
-                    <div class="nameContainerFrame">
-                        <div class="invitePeopleBorder"></div>
-                    </div>
-                    
-                </div>
-                <div class="ButtonConfirm">
-                    <button id="cancelButton">Cancel</button>
-                    <button id="confirmButton">Confirm</button>
+                <input type="text" name="billname" id="BillName" placeholder="Bill name">
+                <input type="text" name="amount" id="Amount" placeholder="Amount">
+                <div class="btnFrame">
+                    <button id="cancelBill">CANCEL</button>
+                    <button id="confirmBill">ADD</button>
                 </div>
             </div>
-
-
         </div>
+
+
+
         <div class="mobile">
             <div class="menu">
                 <i class="fa-solid fa-bars" id="toggleSidebar"></i>
                 <h3>GuMaiJayKonDeaw.com</h3>
                 <span></span>
             </div>
-
             
             <div class="sidebar">
                 <div class="projectNameFrame">
@@ -95,26 +65,24 @@
 
 
 
-            <div class="showTrip"></div>
-
-
-                </div>
+            <div class="showBillData">
+                
             </div>
 
+            
             <div class="menu-bottom">
                 <div class="plusButtonControl">
-                    <div class="plusButtonBackground" id="plusButton">
+                    <div class="plusButtonBackground" id="addBillTrip">
                         <i class="fa-solid fa-plus"></i>
                     </div>
                 </div>
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <i class="fa-solid fa-gear"></i>
             </div>
+
         </div>
     </div>
-
-
-    <script type="module" src="../js/script.js"></script>
+    <script src="../js/tripDetail.js"></script>
     <script src="../js/dec_sidebar.js"></script>
 </body>
 </html>

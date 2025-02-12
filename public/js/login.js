@@ -19,12 +19,13 @@ loginButton.addEventListener('click', async () => {
             headers: {"Content-Type" : "application/json"},
             body: JSON.stringify({ email , password }),
         })
+        const result = await res.json();
         if(!res.ok){
             alert("This email address has not been logged in yet")
         }
         else {
             alert("Welcome back!")
-            window.location.href = "/html/index.html"
+            window.location.href = result.redirectUrl;
         }
     } catch (err) {
         if(err){
@@ -34,5 +35,5 @@ loginButton.addEventListener('click', async () => {
 })
 
 registerButton.addEventListener('click', () => {
-    window.location.href = "/html/register.html"
+    window.location.href = "/register.html"
 })

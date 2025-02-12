@@ -13,11 +13,15 @@ mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASS
     })
 
     const login = new mongoose.Schema({
-        email: {type: String},
-        password: {type: String},
+        email: {type: String , require: true},
+        password: {type: String , require: true},
         Data: [{
             tripName: {type: String , require: true},
             peopleNameList: {type: Array},
+            tripBill: [{
+                bill: {type: String , require: true},
+                amount: {type: Number, require: true},
+            }]
         }],
         dateNow: { type: Date, default: new Date() }
     })

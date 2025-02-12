@@ -45,20 +45,27 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", 'index.html')); 
   });
   
-app.get('/html/index.html', (req, res) => {
+app.get('/index.html', (req, res) => {
     if (!req.session.user) {
       return res.redirect('/');  // Redirect to login if not logged in
     }
     res.sendFile(path.join(__dirname, "public", "html", 'index.html')); 
   });
-app.get('/api/register', (req,res) => {
+app.get('/register.html', (req,res) => {
     if (req.session.user){
-        return res.sendFile(path.join(__dirname, "public", "html", 'index.html'));
+        return res.redirect('/index.html');
     }
+    res.sendFile(path.join(__dirname, "public", "html", 'register.html'));
+})
+app.get('/tripDetail.html',(req,res) => {
+    if (!req.session.user){
+        return res.redirect('/')
+    }
+    res.sendFile(path.join(__dirname, "public", "html", 'tripDetail.html'));
 })
 
-// API Routes
 
+// API Routes
 app.get('/api/LoadData', async (req,res) => {
     try {
         if (!req.session.user || !req.session.user.email) {
@@ -200,7 +207,7 @@ app.post('/api/sign-in',async (req,res) => {
   req.session.user = { id: user._id, email: user.email };
 
   // Send success response
-  return res.json({ success: true, message: "Login successful!" });
+  return res.json({ success: true, redirectUrl: '/index.html' });
   })
 
   app.post('/api/register', async (req,res) => {
@@ -211,14 +218,106 @@ app.post('/api/sign-in',async (req,res) => {
     }
     const newData = new loginData({email: email, password: password}) 
     newData.save()
-    return res.json("Register successful!");
+    return res.json({ success: true, redirectUrl: '/index.html' });
   })
+
+
+app.post('/api/addBill', async (req,res) => {
+    try {
+    if (!req.session.user || !req.session.user.email) {
+        return res.status(401).json({ error: "User not logged in or email not found" });
+    }
+
+    const { tripName , BillName , Amount } = req.body
+    const userEmail = req.session.user.email
+
+    const user = await loginData.findOne({ email: userEmail })
+    if (!user) {
+        return res.status(404).json({ error: "User not found" });
+    }
+    const trip = user.Data.find(trip => trip.tripName === tripName);
+    if (!trip) {
+        return res.status(404).json({ error: 'Trip not found' });
+    }
+    const newBill = { bill: BillName, amount: Amount };
+    trip.tripBill.push(newBill)
+
+    user.markModified("Data");
+    await user.save()
+    return res.json({ BillName: BillName , Amount: Amount });
+    } catch (err) {
+        return res.status(500).json({ error: "Failed to add bill to database" });
+    }
+})
+
+app.post('/api/getBill' , async (req,res) => {
+   try { 
+    if (!req.session.user || !req.session.user.email){
+        return res.status(401).json({ error: "User not logged in or email not found" });
+    }
+        const userEmail = req.session.user.email
+        const { tripName } = req.body
+        const user = await loginData.findOne({ email: userEmail })
+    if (!user) {
+        return res.status(404).json({ error: "User not found" });
+    }
+        const trips = user.Data.find(trip => trip.tripName === tripName)
+    if (!trips){
+        return res.status(404).json({ error: "trip not found" });
+    }
+
+    res.json(trips.tripBill);
+
+} catch (err) {
+    return res.status(500).json({ error: "Failed to reload bill" });
+}
+})
+
+app.delete("/api/deleteBill/:billId", async (req,res) => {
+    try {
+        if (!req.session.user || !req.session.user.email){
+            return res.status(401).json({ error: "User not logged in or email not found" });
+        }
+        const userEmail = req.session.user.email
+        const billId = req.params.billId;
+        
+        const user = await loginData.findOne({ email: userEmail })
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        let billDeleted = false;
+
+        user.Data.forEach(trip => {
+            const billIndex = trip.tripBill.findIndex(bill => bill._id.toString() === billId);
+            if (billIndex !== -1) {
+                trip.tripBill.splice(billIndex, 1);
+                billDeleted = true;
+            }
+        });
+
+        if (!billDeleted) {
+            return res.status(404).json({ error: "Bill not found" });
+        }
+
+        // Mark the data as modified and save
+        user.markModified("Data");
+        await user.save();
+
+        res.json({ success: true, message: "Bill deleted successfully" });
+
+    }
+    catch (err) {
+        return res.status(500).json({ error: "Failed to delete bill" });
+    }
+})
+
 
 
 // Serve Static Files
 app.use(express.static(path.join(__dirname, 'public')));
 app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "index.html"));
+    res.sendFile(path.join(__dirname, "public","html", "index.html"));
 });
 
 // Start Server
