@@ -85,7 +85,8 @@
     .billFrame {
         width: 95%;
         height: 130px;
-        border: 1px solid green;
+        background: rgb(255, 255, 255);
+        box-shadow: 0 5px 10px 1px rgba(0, 0, 0, 0.5);
         margin: 10px;
     }
     .billNameFrame {
@@ -135,5 +136,115 @@
         padding: 10px;
         overflow-x: auto;
         overflow-y: hidden;
+    }
+
+
+    /*Menu bottom*/
+    #endTrip {
+        width: 30px;
+        height: 30px;
+        border: none;
+        background: transparent;
+        z-index: 2;
+    }
+
+
+    /*Confirm totals panel*/
+    .sumFrame {
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif ;
+        position: fixed;
+        padding: 20px;
+        top: 20%;
+        width: 300px;
+        height: 150px;
+        display: none;
+        background: rgb(255, 255, 255);
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+    }
+    .sumFrame .sumtextAlertFrame {
+        width: 100%;
+        height: 80px;
+    }
+    .sumFrame .sumtextAlertFrame p {
+        font-size: 20px;
+    }
+    .sumFrame .sumButtonFrame {
+        width: 100%;
+        height: 50px;
+        display: flex;
+        justify-content: end;
+        align-items: center;
+    }
+    .sumFrame .sumButtonFrame button {
+        font-size: 15px;
+        margin: 20px;
+        width: 50px;
+        height: 30px;
+        border: none;
+        background: transparent;
+        color: skyblue;
+        z-index: 2;
+    }
+
+
+    /*Show totals panel*/
+    .totalsFrame {
+        font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif ;
+        position: fixed;
+        padding: 20px;
+        top: 20%;
+        width: 300px;
+        height: 280px;
+        background: rgb(255, 255, 255);
+        box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+        z-index: 1;
+        display: none;
+    }
+    .totalsFrame .totalTextFrame {
+        width: 100%;
+        height: 50px;
+        font-size: 20px;
+        display: flex;
+        align-items: center;
+        padding: 10px;
+        border-bottom: 1px solid black;
+    }
+    .totalsFrame .showTotals {
+        width: 100%;
+        height: 130px;
+        padding: 5px;
+        overflow-y: auto;
+    }
+    .totalsFrame .NameAndAmount {
+        width: 100%;
+        height: 40px;
+        padding: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid black;
+    }
+    .totalsFrame .showTotals .totalsPersonalData {
+        width: 100%;
+        height: 30px;
+        padding: 5px;
+        display: flex;
+        justify-content: space-between;
+    }
+    .totalsFrame .buttonFrame {
+        width: 100%;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: end;
+    }
+    .totalsFrame .buttonFrame button {
+        width: 50px;
+        height: 30px;
+        border: none;
+        font-size: 20px;
+        border-radius: 20px;
+        background: skyblue;
     }
 }

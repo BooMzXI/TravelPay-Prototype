@@ -15,7 +15,7 @@ const app = express();
 
 //Session Config
 app.use(session({
-    secret: 'Bummi',
+    secret: process.env.SECRET_KEY,
     resave: false,
     saveUninitialized: false,
     cookie: { secure: process.env.USE_HTTPS === 'true' }
@@ -38,6 +38,13 @@ if (process.env.USE_HTTPS === 'true') {
     console.log("Starting server with HTTP...");
 }
 
+const requireAuth = (req, res, next) => {
+    if (!req.session.user) { 
+        return res.sendFile(path.join(__dirname, "public", "html", 'login.html')); 
+    }
+    next();
+};
+
 app.get('/', (req, res) => {
     if(!req.session.user){
       return res.sendFile(path.join(__dirname, "public", "html", 'login.html'));
@@ -45,23 +52,29 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", 'index.html')); 
   });
   
-app.get('/index.html', (req, res) => {
-    if (!req.session.user) {
-      return res.redirect('/');  // Redirect to login if not logged in
-    }
-    res.sendFile(path.join(__dirname, "public", "html", 'index.html')); 
-  });
-app.get('/register.html', (req,res) => {
-    if (req.session.user){
+
+// Apply the middleware globally for specific routes
+app.use('/index.html', requireAuth);
+app.use('/tripDetail.html', requireAuth);
+app.use('/setting.html', requireAuth);
+
+app.get('/login.html', (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", 'login.html'));
+});
+app.get('/register.html', (req, res) => {
+    if (req.session.user) {
         return res.redirect('/index.html');
     }
     res.sendFile(path.join(__dirname, "public", "html", 'register.html'));
-})
-app.get('/tripDetail.html',(req,res) => {
-    if (!req.session.user){
-        return res.redirect('/')
-    }
+});
+app.get('/tripDetail.html', (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", 'tripDetail.html'));
+});
+app.get('/index.html', (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", 'index.html'));
+});
+app.get('/setting.html',(req,res) => {
+    res.sendFile(path.join(__dirname, "public" , "html" , "setting.html"));
 })
 
 
@@ -108,6 +121,36 @@ app.post('/api/people', async (req, res) => {
         res.status(500).json({ error: 'Failed to save person' });
     }
 });
+
+app.delete('/api/deletePeople/:inputTripName/:personName', async (req,res) => {
+    try {
+        if (!req.session.user || !req.session.user.email){
+            return res.status(404).json('Error: User not logged in or email not found')
+        }
+        const { inputTripName, personName } =  req.params
+        const userEmail = req.session.user.email;
+        const user = await loginData.findOne({ email: userEmail });
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        const findTripName = user.Data.find(trip => trip.tripName === inputTripName)
+        if (!findTripName) {
+            return res.status(404).json({ error: 'Trip not found' })
+        }
+        const personIndex = findTripName.peopleNameList.findIndex(p => p === personName);
+        if (personIndex === -1) {
+        return res.status(404).json({ error: 'Person not found' });
+}
+        findTripName.peopleNameList.splice(personIndex, 1);
+
+        user.markModified('Data');
+        await user.save();
+        res.json({ success: true, message: 'Person deleted successfully' });
+    }
+    catch (err) {
+        res.status(500).json({ error: 'Failed to delete person' });
+    }
+})
 
 app.post('/api/trips', async (req, res) => {
     try {
@@ -309,6 +352,41 @@ app.delete("/api/deleteBill/:billId", async (req,res) => {
     }
     catch (err) {
         return res.status(500).json({ error: "Failed to delete bill" });
+    }
+})
+
+app.post('/api/saveCheckbox', async (req, res) => {
+    const { tripName, billName, checkboxStates } = req.body;
+    const userEmail = req.session.user.email;
+
+    try {
+        const user = await loginData.findOne({ email: userEmail });
+        if (!user) return res.status(404).json({ error: 'User not found' });
+
+        const trip = user.Data.find(trip => trip.tripName === tripName);
+        if (!trip) return res.status(404).json({ error: 'Trip not found' });
+
+        const bill = trip.tripBill.find(bill => bill.bill === billName);
+        if (!bill) return res.status(404).json({ error: 'Bill not found' });
+
+        bill.checkboxStates = checkboxStates; // Update checkbox states
+        user.markModified('Data');
+        await user.save();
+
+        res.json({ success: true, message: 'Checkbox states saved successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to save checkbox states' });
+    }
+});
+
+app.get('/api/getEmail', (req,res) => {
+    try {
+        if (!req.session.user.email) {
+            return res.status(401).json({ error: "User not logged in or email not found" })
+        }
+        res.json({email: req.session.user.email})
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to save checkbox states' });
     }
 })
 

@@ -21,6 +21,7 @@ mongoose.connect(`mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASS
             tripBill: [{
                 bill: {type: String , require: true},
                 amount: {type: Number, require: true},
+                checkboxStates: { type: Map, of: Boolean }
             }]
         }],
         dateNow: { type: Date, default: new Date() }

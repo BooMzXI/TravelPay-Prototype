@@ -3,11 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../css/additionalElement.css">
     <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/tripData.css">
     <link rel="stylesheet" href="../css/sidebar.css">
+    <link rel="shortcut icon" href="../img/PayIcon.png" type="image/x-icon">
     <script src="https://kit.fontawesome.com/009230d963.js" crossorigin="anonymous"></script>
-    <title>Trip</title>
+    <title>TravelPay</title>
 </head>
 <body>
     <div class="container">
@@ -31,6 +33,33 @@
                     <button id="confirmBill">ADD</button>
                 </div>
             </div>
+
+            <div class="sumFrame">
+                <div class="sumtextAlertFrame">
+                    <p>Are you sure to total all your expenses now?</p>
+                </div>
+                <div class="sumButtonFrame">
+                    <button id="cancelSum">CANCEL</button>
+                    <button id="confirmSum">CONFIRM</button>
+                </div>
+            </div>
+
+            <div class="totalsFrame">
+                <div class="totalTextFrame">
+                    <p>Totals</p>
+                </div>
+                <div class="NameAndAmount">
+                    <h4>Name</h4>
+                    <h4>Amount</h4>
+                </div>
+                <div class="showTotals">
+                    
+                </div>
+                <div class="buttonFrame">
+                    <button id="confirmTotals"><i class="fa-solid fa-check"></i></button>
+                </div>
+            </div>
+
         </div>
 
 
@@ -38,14 +67,14 @@
         <div class="mobile">
             <div class="menu">
                 <i class="fa-solid fa-bars" id="toggleSidebar"></i>
-                <h3>GuMaiJayKonDeaw.com</h3>
+                <h3 id="showTripNameOnTop">GuMaiJayKonDeaw.com</h3>
                 <span></span>
             </div>
             
             <div class="sidebar">
                 <div class="projectNameFrame">
                     <div class="projectName">
-                        <p>GuMaiJayKonDeaw.com</p>
+                        <p></p>
                     </div>
                     <div class="exitButtonDiv">
                         <button id="exitSidebar"><i class="fa-solid fa-x"></i></button>
@@ -77,7 +106,7 @@
                     </div>
                 </div>
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <i class="fa-solid fa-gear"></i>
+                <button id="endTrip"><i class="fa-solid fa-clipboard-list"></i></button>
             </div>
 
         </div>

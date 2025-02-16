@@ -1,5 +1,7 @@
 #registerButton {
     border: none;
+    background: transparent;
+    font-weight: bold;
 }
 #registerButton:hover {
     background: #157347;

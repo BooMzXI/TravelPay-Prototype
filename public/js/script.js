@@ -14,12 +14,12 @@ let confirmTripName = document.getElementById('confirmTripName')
 let addTripBackground = document.getElementsByClassName('addTripBackground')
 let tripData = document.getElementsByClassName('tripData')
 
-
 let server = "http://localhost:3000"; // Server URL (HTTPS)
 
 let inputTripName;
 let inputPeopleNameVariable;
 let peopleList = [];
+let isConfirmTripNameClick = false
 
 window.onload = async () => {
     try {
@@ -32,7 +32,6 @@ window.onload = async () => {
             return;
         }
         const trips = await res.json();
-        console.log("Trips loaded:", trips);
 
         const showTripContainer = document.querySelector(".showTrip");
         showTripContainer.innerHTML = ""; // Clear previous content
@@ -65,7 +64,8 @@ window.onload = async () => {
     }
 }
 
-plusBtn.addEventListener("click", () => {
+plusBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
     tripDetailPage.style.display = "inline";
     mobileContainer.classList.add("blur-active");
     addTripBackground[0].style.height = "100px";
@@ -76,9 +76,22 @@ cancelBtn.addEventListener("click", () => {
     mobileContainer.classList.remove("blur-active");
     inputElement.value = "";
     invitePeopleBorder.innerHTML = "";
+    isConfirmTripNameClick = false
+});
+
+//Fix Here (may check active for inputName)
+
+document.addEventListener('click', (e) => {
+    if (!tripDetailPage.contains(e.target) && !isConfirmTripNameClick) {  
+        tripDetailPage.style.display = "none";
+        mobileContainer.classList.remove("blur-active");
+        inputElement.value = "";
+        invitePeopleBorder.innerHTML = "";
+    }
 });
 
 confirmTripName.addEventListener('click', async () => {
+    isConfirmTripNameClick = true
     inputTripName = inputElement.value.trim();
     if (!inputTripName) {
         const errorData = await response.json();
@@ -137,10 +150,39 @@ ConfirmInputBtn.addEventListener("click", async () => {
     tripDetailPage.classList.remove("blur-active");
     InputNamePage.style.display = "none";
     InputPeopleName.value = "";
+    //isInputPeopleNameIsActive = false
 });
 
 
+invitePeopleBorder.addEventListener("click", async (event) => {
+    if (event.target.closest(".deleteNameButton")) {
+        const personDiv = event.target.closest(".peopleName");
+        const personName = personDiv.querySelector("h4").innerText;
+
+        if (confirm(`Are you sure you want to delete ${personName}?`)) {
+            try {
+                const deleteResponse = await fetch(`${server}/api/deletePeople/${inputTripName}/${personName}`, {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                });
+
+                if (!deleteResponse.ok) {
+                    throw new Error("Failed to delete person");
+                }
+
+                personDiv.remove();
+                console.log(`${personName} deleted successfully`);
+            } catch (error) {
+                console.error("Error deleting person:", error);
+            }
+        }
+    }
+});
+
+
+
 confirmBtn.addEventListener("click", async () => {
+    isConfirmTripNameClick = false
    try {
     const res = await fetch(`${server}/api/tripData`, {
         method: "POST",
@@ -197,6 +239,33 @@ CancelInputBtn.addEventListener("click", () => {
 });
 
 document.querySelector(".showTrip").addEventListener("click", async (event) => {
+
+    if (event.target.closest(".deleteTripButton")) {
+        event.stopPropagation();
+        const tripDiv = event.target.closest(".tripData"); // Get the trip container
+        const tripName = tripDiv.querySelector(".nameTripFrame h4").innerText; // Get the trip name
+        
+        if (confirm(`Are you sure you want to delete the trip: ${tripName}?`)) {
+            try {
+                const res = await fetch(`${server}/api/trips/${tripName}`, {
+                    method: "DELETE",
+                    headers: { "Content-Type": "application/json" },
+                });
+
+                if (!res.ok) {
+                    throw new Error("Failed to delete trip");
+                }
+
+                tripDiv.remove();
+                console.log("Trip deleted successfully!");
+            } catch (err) {
+                console.error("Error deleting trip:", err);
+            }
+        }
+        return
+    }
+
+
     if (event.target.closest(".tripData")) {
         const tripDiv = event.target.closest(".tripData");
         const tripName = tripDiv.querySelector(".nameTripFrame h4").innerText;
@@ -219,27 +288,8 @@ document.querySelector(".showTrip").addEventListener("click", async (event) => {
             console.error('Error fetching data:', err);
         }
     }
-
-    if (event.target.closest(".deleteTripButton")) {
-        const tripDiv = event.target.closest(".tripData"); // Get the trip container
-        const tripName = tripDiv.querySelector(".nameTripFrame h4").innerText; // Get the trip name
-        
-        if (confirm(`Are you sure you want to delete the trip: ${tripName}?`)) {
-            try {
-                const res = await fetch(`${server}/api/trips/${tripName}`, {
-                    method: "DELETE",
-                    headers: { "Content-Type": "application/json" },
-                });
-
-                if (!res.ok) {
-                    throw new Error("Failed to delete trip");
-                }
-
-                tripDiv.remove();
-                console.log("Trip deleted successfully!");
-            } catch (err) {
-                console.error("Error deleting trip:", err);
-            }
-        }
-    }
 });
+
+document.getElementById('setting').addEventListener('click', () => {
+    window.location.href = "/setting.html"
+})

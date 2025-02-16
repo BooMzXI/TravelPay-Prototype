@@ -2,6 +2,7 @@ const sidebar = document.querySelector('.sidebar');
 const toggleButton = document.querySelector('#toggleSidebar'); 
 const exitButtonDiv = document.querySelector('#exitSidebar')
 
+
 toggleButton.addEventListener('click', () => {
     sidebar.classList.add('open');
     sidebar.classList.remove('close');
