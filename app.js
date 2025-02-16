@@ -390,6 +390,16 @@ app.get('/api/getEmail', (req,res) => {
     }
 })
 
+app.post('/api/logout', (req, res) => {
+    req.session.destroy(err => {
+        if (err) {
+            return res.status(500).json({ error: 'Failed to logout' });
+        }
+        res.clearCookie('connect.sid');  // Clear session cookie
+        res.status(200).json({ message: 'Logout successful' });
+    });
+});
+
 
 
 // Serve Static Files
