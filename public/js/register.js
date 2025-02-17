@@ -3,7 +3,7 @@ let registerPassword = document.getElementById('registerPassword')
 let registerRepeatPassword = document.getElementById('registerRepeatPassword')
 let registerButton = document.getElementById('registerButton')
 
-let server = "http://localhost:3000";
+let server = location.origin
 
 registerButton.addEventListener('click', async () => {
     const var_registerEmail = registerEmail.value.trim()

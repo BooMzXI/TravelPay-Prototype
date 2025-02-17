@@ -10,7 +10,7 @@ let cancelBill = document.getElementById('cancelBill')
 let addBillTrip = document.getElementById('addBillTrip')
 const showBillData = document.querySelector('.showBillData'); 
 
-let server = "http://localhost:3000";
+let server = location.origin;
 
 const tripData = JSON.parse(sessionStorage.getItem("tripData"));
 window.onload = async () => {
@@ -55,12 +55,12 @@ window.onload = async () => {
                 ${tripData.peopleNameList.map(person => `
                 <div class="peopleCheckBox">
                     <input type="checkbox" name="peopleName" value="${person}" id="checkbox-${person}">
-                    <label for="checkbox-${person}">${person}</label><br>
+                    <label>${person}</label><br>
                 </div>
             `).join('')}
         </div>
     `;
-            
+
             showBillData.appendChild(billFrame);
 
             if (bill.checkboxStates) {
@@ -211,7 +211,7 @@ document.getElementById('confirmSum').addEventListener('click', async () => {
     const peopleTotals = {}
     let totalsAmount = 0
     document.querySelectorAll('.billFrame').forEach(bills => {
-        const amountText = document.querySelector('.amount').textContent.replace('฿' , '').trim()
+        const amountText = bills.querySelector('.amount').textContent.replace('฿' , '').trim()
         const amount = parseFloat(amountText)
         totalsAmount += amount
 

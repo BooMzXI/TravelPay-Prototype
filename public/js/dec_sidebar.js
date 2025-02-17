@@ -2,8 +2,6 @@ const sidebar = document.querySelector('.sidebar');
 const toggleButton = document.querySelector('#toggleSidebar'); 
 const exitButtonDiv = document.querySelector('#exitSidebar')
 
-let server = "http://localhost:3000";
-
 toggleButton.addEventListener('click', () => {
     sidebar.classList.add('open');
     sidebar.classList.remove('close');
@@ -19,7 +17,7 @@ const home = document.querySelector('#home').addEventListener('click', () => {
 document.querySelector('#signout').addEventListener('click', async () => {
     if (confirm("Are you sure to sign out?")) {
         try {
-            const res = await fetch(`${server}/api/logout`, {
+            const res = await fetch(`${location.origin}/api/logout`, {
                 method: 'POST',
                 credentials: 'include' 
             });

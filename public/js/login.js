@@ -3,7 +3,7 @@ const InputEmail = document.getElementById('EmailData')
 const loginButton = document.getElementById('loginButton')
 const registerButton = document.getElementById('registerButton')
 
-let server = "http://localhost:3000";
+let server = location.origin
 
 loginButton.addEventListener('click', async () => {
     let email = InputEmail.value.trim()

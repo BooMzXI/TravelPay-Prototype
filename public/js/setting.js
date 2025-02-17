@@ -1,7 +1,7 @@
 const userEmailFrame = document.querySelector('.userEmailFrame')
 const showEmail = document.querySelector('#showEmail')
 
-let server = "http://localhost:3000";
+let server = location.origin;
 
 window.onload = async () => {
     try {

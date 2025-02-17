@@ -14,7 +14,7 @@ let confirmTripName = document.getElementById('confirmTripName')
 let addTripBackground = document.getElementsByClassName('addTripBackground')
 let tripData = document.getElementsByClassName('tripData')
 
-let server = "http://localhost:3000"; // Server URL (HTTPS)
+let server = location.origin
 
 let inputTripName;
 let inputPeopleNameVariable;
