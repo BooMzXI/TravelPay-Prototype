@@ -3,7 +3,7 @@ const mobileContainer = document.querySelector(".mobile");
 let tripDetailPage = document.getElementById("tripDetail");
 let cancelBtn = document.getElementById("cancelButton");
 let confirmBtn = document.getElementById("confirmButton");
-let inputElement = document.querySelector("#tripDetail input"); 
+let inputElement = document.querySelector("#tripDetail input");
 let addBtn = document.getElementById("addButton");
 let InputNamePage = document.querySelector(".inputNameBackground");
 let CancelInputBtn = document.getElementById("cancelInputButton");
@@ -14,7 +14,7 @@ let confirmTripName = document.getElementById('confirmTripName')
 let addTripBackground = document.getElementsByClassName('addTripBackground')
 let tripData = document.getElementsByClassName('tripData')
 
-let server = "http://localhost:3000"; // Server URL (HTTPS)
+let server = location.origin
 
 let inputTripName;
 let inputPeopleNameVariable;
@@ -25,7 +25,7 @@ window.onload = async () => {
     try {
         const res = await fetch(`${server}/api/LoadData`, {
             method: "GET",
-            headers: {"Content-Type" : "application/json"}
+            headers: { "Content-Type": "application/json" }
         })
         if (!res.ok) {
             console.log("Error loading trips");
@@ -60,7 +60,7 @@ window.onload = async () => {
             showTripContainer.appendChild(tripDataDiv);
         });
     } catch (err) {
-        console.log("Error unable to load data from the database: ",err)
+        console.log("Error unable to load data from the database: ", err)
     }
 }
 
@@ -82,7 +82,7 @@ cancelBtn.addEventListener("click", () => {
 //Fix Here (may check active for inputName)
 
 document.addEventListener('click', (e) => {
-    if (!tripDetailPage.contains(e.target) && !isConfirmTripNameClick) {  
+    if (!tripDetailPage.contains(e.target) && !isConfirmTripNameClick) {
         tripDetailPage.style.display = "none";
         mobileContainer.classList.remove("blur-active");
         inputElement.value = "";
@@ -96,6 +96,11 @@ confirmTripName.addEventListener('click', async () => {
     if (!inputTripName) {
         const errorData = await response.json();
         alert(errorData.message || "Trip name already exists! Try another.");
+        // Swal.fire({
+        //     icon: "error",
+        //     title: "Oops...",
+        //     text: "Something went wrong!",
+        // });
         inputElement.value = "";
         return;
     }
@@ -106,12 +111,17 @@ confirmTripName.addEventListener('click', async () => {
             body: JSON.stringify({ tripName: inputTripName }),
         });
         if (!response.ok) {
-            alert("Please use another name!")
+            // alert("Please use another name!")
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Please use another name!",
+            });
             inputElement.value = "";
             return
-    }
-    addTripBackground[0].style.height = "400px";
-    } catch(err) {
+        }
+        addTripBackground[0].style.height = "400px";
+    } catch (err) {
         console.error(err);
     }
 })
@@ -125,24 +135,24 @@ ConfirmInputBtn.addEventListener("click", async () => {
         const response = await fetch(`${server}/api/people`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name: inputPeopleNameVariable , tripName: inputTripName}),
+            body: JSON.stringify({ name: inputPeopleNameVariable, tripName: inputTripName }),
         });
 
         if (!response.ok) {
             console.log("Failed to save person");
             return
-    }
-    const { name , peopleNameList } = await response.json();
+        }
+        const { name, peopleNameList } = await response.json();
 
-    const personDiv = document.createElement("div");
-    personDiv.classList.add("peopleName");
-    personDiv.innerHTML = `
+        const personDiv = document.createElement("div");
+        personDiv.classList.add("peopleName");
+        personDiv.innerHTML = `
     <h4>${name}</h4>
     <button class="deleteNameButton">
         <i class="fa-solid fa-delete-left"></i>
     </button>
 `;
-    invitePeopleBorder.appendChild(personDiv);
+        invitePeopleBorder.appendChild(personDiv);
     } catch (error) {
         console.error(error);
     }
@@ -159,23 +169,34 @@ invitePeopleBorder.addEventListener("click", async (event) => {
         const personDiv = event.target.closest(".peopleName");
         const personName = personDiv.querySelector("h4").innerText;
 
-        if (confirm(`Are you sure you want to delete ${personName}?`)) {
-            try {
-                const deleteResponse = await fetch(`${server}/api/deletePeople/${inputTripName}/${personName}`, {
-                    method: "DELETE",
-                    headers: { "Content-Type": "application/json" },
-                });
+        Swal.fire({
+            title: "Are you sure?",
+            text: `Are you sure you want to delete ${personName}?`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it"
+        }).then(async (result) => {
 
-                if (!deleteResponse.ok) {
-                    throw new Error("Failed to delete person");
+            if (result.isConfirmed) {
+                try {
+                    const deleteResponse = await fetch(`${server}/api/deletePeople/${inputTripName}/${personName}`, {
+                        method: "DELETE",
+                        headers: { "Content-Type": "application/json" },
+                    });
+
+                    if (!deleteResponse.ok) {
+                        throw new Error("Failed to delete person");
+                    }
+
+                    personDiv.remove();
+                    console.log(`${personName} deleted successfully`);
+                } catch (error) {
+                    console.error("Error deleting person:", error);
                 }
-
-                personDiv.remove();
-                console.log(`${personName} deleted successfully`);
-            } catch (error) {
-                console.error("Error deleting person:", error);
             }
-        }
+        })
     }
 });
 
@@ -183,18 +204,18 @@ invitePeopleBorder.addEventListener("click", async (event) => {
 
 confirmBtn.addEventListener("click", async () => {
     isConfirmTripNameClick = false
-   try {
-    const res = await fetch(`${server}/api/tripData`, {
-        method: "POST",
-        headers: { "Content-Type" : "application/json" },
-        body: JSON.stringify({ tripName: inputTripName }),
-    })
-    if(!res.ok){
-        throw new Error("Error to fetch data")
-    }
-    const { tripName , peopleNameList} = await res.json();
+    try {
+        const res = await fetch(`${server}/api/tripData`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ tripName: inputTripName }),
+        })
+        if (!res.ok) {
+            throw new Error("Error to fetch data")
+        }
+        const { tripName, peopleNameList } = await res.json();
 
-    const tripDataDiv = document.createElement("div");
+        const tripDataDiv = document.createElement("div");
         tripDataDiv.classList.add("tripData");
         tripDataDiv.innerHTML = `
         <div class="nameTripFrame">
@@ -211,18 +232,18 @@ confirmBtn.addEventListener("click", async () => {
             </div>
         </div>
     `;
-    const showTripContainer = document.querySelector(".showTrip");
-    showTripContainer.appendChild(tripDataDiv);
+        const showTripContainer = document.querySelector(".showTrip");
+        showTripContainer.appendChild(tripDataDiv);
 
-    tripDetailPage.style.display = "none";
-    mobileContainer.classList.remove("blur-active");
-    inputElement.value = "";
-    peopleList = [];
-    invitePeopleBorder.innerHTML = ""; 
-   } 
+        tripDetailPage.style.display = "none";
+        mobileContainer.classList.remove("blur-active");
+        inputElement.value = "";
+        peopleList = [];
+        invitePeopleBorder.innerHTML = "";
+    }
     catch (err) {
         console.error('Error fetching data:', err);
-   }
+    }
 });
 
 // Add people name
@@ -244,24 +265,35 @@ document.querySelector(".showTrip").addEventListener("click", async (event) => {
         event.stopPropagation();
         const tripDiv = event.target.closest(".tripData"); // Get the trip container
         const tripName = tripDiv.querySelector(".nameTripFrame h4").innerText; // Get the trip name
-        
-        if (confirm(`Are you sure you want to delete the trip: ${tripName}?`)) {
-            try {
-                const res = await fetch(`${server}/api/trips/${tripName}`, {
-                    method: "DELETE",
-                    headers: { "Content-Type": "application/json" },
-                });
 
-                if (!res.ok) {
-                    throw new Error("Failed to delete trip");
+        Swal.fire({
+            title: "Are you sure?",
+            text: `Are you sure you want to delete the trip: ${tripName}?`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it"
+        }).then(async (result) => {
+
+            if (result.isConfirmed) {
+                try {
+                    const res = await fetch(`${server}/api/trips/${tripName}`, {
+                        method: "DELETE",
+                        headers: { "Content-Type": "application/json" },
+                    });
+
+                    if (!res.ok) {
+                        throw new Error("Failed to delete trip");
+                    }
+
+                    tripDiv.remove();
+                    console.log("Trip deleted successfully!");
+                } catch (err) {
+                    console.error("Error deleting trip:", err);
                 }
-
-                tripDiv.remove();
-                console.log("Trip deleted successfully!");
-            } catch (err) {
-                console.error("Error deleting trip:", err);
             }
-        }
+        })
         return
     }
 
@@ -272,14 +304,14 @@ document.querySelector(".showTrip").addEventListener("click", async (event) => {
         try {
             const res = await fetch(`${server}/api/tripData`, {
                 method: "POST",
-                headers: {"Content-Type" : "application/json"},
-                body: JSON.stringify({tripName: tripName})
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ tripName: tripName })
             })
-            if (!res.ok){
+            if (!res.ok) {
                 throw new Error("Error to GET tripData")
             } else {
                 const tripData = await res.json()
-                
+
                 sessionStorage.setItem("tripData", JSON.stringify(tripData));
 
                 window.location.href = "/tripDetail.html";

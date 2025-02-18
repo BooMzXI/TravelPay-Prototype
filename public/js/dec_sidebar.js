@@ -1,8 +1,6 @@
 const sidebar = document.querySelector('.sidebar');
-const toggleButton = document.querySelector('#toggleSidebar'); 
+const toggleButton = document.querySelector('#toggleSidebar');
 const exitButtonDiv = document.querySelector('#exitSidebar')
-
-let server = "http://localhost:3000";
 
 toggleButton.addEventListener('click', () => {
     sidebar.classList.add('open');
@@ -17,20 +15,39 @@ const home = document.querySelector('#home').addEventListener('click', () => {
     window.location.href = "/"
 })
 document.querySelector('#signout').addEventListener('click', async () => {
-    if (confirm("Are you sure to sign out?")) {
-        try {
-            const res = await fetch(`${server}/api/logout`, {
-                method: 'POST',
-                credentials: 'include' 
-            });
-            if (res.ok) {
-                alert('Logged out successfully!');
-                window.location.href = '/'; 
-            } else {
-                alert('Logout failed.');
+    Swal.fire({
+        title: "Are you sure?",
+        text: "Are you sure to sign out?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, sign out"
+    }).then(async (result) => {
+
+        if (result.isConfirmed) {
+            try {
+                const res = await fetch(`${location.origin}/api/logout`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                if (res.ok) {
+                    alert('Logged out successfully!');
+                    window.location.href = '/';
+                } else {
+                    // alert('Logout failed.');
+                    Swal.fire({
+                        icon: "error",
+                        title: "Oops...",
+                        text: "Logout failed",
+                    });
+                }
+            } catch (error) {
+                console.error('Error:', error);
             }
-        } catch (error) {
-            console.error('Error:', error);
         }
-    }
+    });
+    // if (confirm("Are you sure to sign out?")) {
+
+    // }
 })

@@ -8,9 +8,9 @@ let confirmBill = document.getElementById('confirmBill')
 let cancelBill = document.getElementById('cancelBill')
 
 let addBillTrip = document.getElementById('addBillTrip')
-const showBillData = document.querySelector('.showBillData'); 
+const showBillData = document.querySelector('.showBillData');
 
-let server = "http://localhost:3000";
+let server = location.origin;
 
 const tripData = JSON.parse(sessionStorage.getItem("tripData"));
 window.onload = async () => {
@@ -21,12 +21,12 @@ window.onload = async () => {
     const showTripNameOnTop = document.querySelector("#showTripNameOnTop")
     showTripNameOnTop.innerHTML = tripData.tripName
     try {
-        const res = await fetch(`${server}/api/getBill` , {
+        const res = await fetch(`${server}/api/getBill`, {
             method: "POST",
-            headers: {"Content-Type" : "application/json"},
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ tripName: tripData.tripName }),
         })
-        if (!res.ok){
+        if (!res.ok) {
             return console.log("Error can't fetch to getBill")
         }
         const billData = await res.json()
@@ -55,12 +55,12 @@ window.onload = async () => {
                 ${tripData.peopleNameList.map(person => `
                 <div class="peopleCheckBox">
                     <input type="checkbox" name="peopleName" value="${person}" id="checkbox-${person}">
-                    <label for="checkbox-${person}">${person}</label><br>
+                    <label>${person}</label><br>
                 </div>
             `).join('')}
         </div>
     `;
-            
+
             showBillData.appendChild(billFrame);
 
             if (bill.checkboxStates) {
@@ -76,12 +76,12 @@ window.onload = async () => {
                 const billFrame = checkbox.closest('.billFrame')
                 const billName = billFrame.querySelector('h2').textContent
                 const tripName = tripData.tripName;
-        
+
                 const checkboxStates = {};
                 billFrame.querySelectorAll('input[name="peopleName"]').forEach(cb => {
                     checkboxStates[cb.value] = cb.checked;
                 })
-        
+
                 try {
                     const res = await fetch(`${server}/api/saveCheckbox`, {
                         method: 'POST',
@@ -103,7 +103,7 @@ window.onload = async () => {
 
 
 confirmBill.addEventListener('click', async () => {
-    if (BillName.value.trim() === '' || Amount.value.trim() === ''){
+    if (BillName.value.trim() === '' || Amount.value.trim() === '') {
         return console.log('Please fill billname and amount')
     }
 
@@ -112,13 +112,13 @@ confirmBill.addEventListener('click', async () => {
     try {
         const res = await fetch(`${server}/api/addBill`, {
             method: "POST",
-            headers: {"Content-Type" : "application/json"},
-            body: JSON.stringify({tripName: tripData.tripName , BillName: var_billName , Amount: var_amount})
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ tripName: tripData.tripName, BillName: var_billName, Amount: var_amount })
         })
         if (!res.ok) {
             console.log("Error can't add bill to Database")
         }
-        const { BillName , Amount } = await res.json()
+        const { BillName, Amount } = await res.json()
         if (BillName && Amount) {
             const billFrame = document.createElement('div');
             billFrame.classList.add("billFrame");
@@ -143,13 +143,13 @@ confirmBill.addEventListener('click', async () => {
             `).join('')}
         </div>
     `;
-            
+
             showBillData.appendChild(billFrame);
             window.location.reload()
         } else {
             console.error('Invalid response format');
         }
-    } 
+    }
     catch (err) {
         console.log(err)
     }
@@ -164,22 +164,33 @@ showBillData.addEventListener('click', async (e) => {
             console.error("Bill ID not found");
             return;
         }
-        if (confirm(`Are you sure you want to delete the Bill?`)){
-            try {
-                const res = await fetch(`${server}/api/deleteBill/${billId}`, {
-                    method: "DELETE",
-                    headers: {"Content-Type" : "application/json"},
-                })
-                if (!res.ok) {
-                    console.log("Error can't delete Bill")
-                }
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Are you sure you want to delete the Bill?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it"
+        }).then(async (result) => {
 
-                billFrame.remove()
+            if (result.isConfirmed) {
+                try {
+                    const res = await fetch(`${server}/api/deleteBill/${billId}`, {
+                        method: "DELETE",
+                        headers: { "Content-Type": "application/json" },
+                    })
+                    if (!res.ok) {
+                        console.log("Error can't delete Bill")
+                    }
+
+                    billFrame.remove()
+                }
+                catch (err) {
+                    console.log(err)
+                }
             }
-            catch (err) {
-                console.log(err)
-            }
-        }
+        })
     }
 })
 
@@ -193,7 +204,7 @@ cancelBill.addEventListener('click', () => {
 })
 
 ////// EndTrip Logic //////////
-const sumFrame = document.querySelector('.sumFrame') 
+const sumFrame = document.querySelector('.sumFrame')
 const showTotals = document.querySelector('.showTotals')
 const totalsFrame = document.querySelector('.totalsFrame')
 
@@ -211,7 +222,7 @@ document.getElementById('confirmSum').addEventListener('click', async () => {
     const peopleTotals = {}
     let totalsAmount = 0
     document.querySelectorAll('.billFrame').forEach(bills => {
-        const amountText = document.querySelector('.amount').textContent.replace('฿' , '').trim()
+        const amountText = bills.querySelector('.amount').textContent.replace('฿', '').trim()
         const amount = parseFloat(amountText)
         totalsAmount += amount
 
@@ -220,7 +231,7 @@ document.getElementById('confirmSum').addEventListener('click', async () => {
 
         checkedPeople.forEach(checked => {
             const person = checked.value
-            if (!peopleTotals[person]){
+            if (!peopleTotals[person]) {
                 peopleTotals[person] = 0
             }
             peopleTotals[person] += splitAmount
@@ -229,7 +240,7 @@ document.getElementById('confirmSum').addEventListener('click', async () => {
     for (const person in peopleTotals) {
         const totalsPersonalData = document.createElement('div')
         totalsPersonalData.classList.add('totalsPersonalData')
-        totalsPersonalData.innerHTML =`
+        totalsPersonalData.innerHTML = `
         <h4>${person}:</h4>
         <h4>${peopleTotals[person].toFixed(2)} ฿</h4>
         `
@@ -238,11 +249,11 @@ document.getElementById('confirmSum').addEventListener('click', async () => {
     const totalsPersonalData = document.createElement('div')
     totalsPersonalData.classList.add('totalsPersonalData')
     totalsPersonalData.style.marginTop = "10px"
-    totalsPersonalData.innerHTML =`
+    totalsPersonalData.innerHTML = `
         <h4>Total:</h4>
         <h4>${totalsAmount.toFixed(2)} ฿</h4>
         `
-        showTotals.appendChild(totalsPersonalData)
+    showTotals.appendChild(totalsPersonalData)
 })
 
 document.querySelector('#confirmTotals').addEventListener('click', () => {
